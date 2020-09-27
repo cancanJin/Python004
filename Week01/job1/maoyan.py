@@ -43,7 +43,7 @@ def get_detail(url, movie={}):
         if index == 0:
             for movie_type in base_li.find_all("a"):
                 movie_types.append(movie_type.text)
-        elif index == len(li_info):
+        elif index == len(li_info)-1:
             movie_date = base_li.text
     movie["movie_types"] = movie_types
     movie["movie_date"] = movie_date

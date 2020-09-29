@@ -46,6 +46,7 @@ def get_detail(url, movie={}):
                 movie_types.append(movie_type.text)
         elif index == len(li_info)-1:
             movie_date = base_li.text
+        index=index+1
     movie["movie_types"] = movie_types
     movie["movie_date"] = movie_date
 

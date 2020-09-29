@@ -25,6 +25,7 @@ def get_and_save_top10(url):
             movie["title"] = movie_title
             movie_detail_href = DOMAIN + title_a.get("href")
             get_detail(movie_detail_href, movie=movie)
+            movies.append(movie)
     save(movies)
 
 

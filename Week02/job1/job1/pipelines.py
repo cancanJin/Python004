@@ -10,8 +10,8 @@ import pymysql
 
 
 class Job1Pipeline:
-    connection_info = {"host": "49.233.168.128",
-                       "port": 23306,
+    connection_info = {"host": "127.0.0.1",
+                       "port": 3306,
                        "user": "root",
                        "password": "root@123",
                        "database": "test-mysql",

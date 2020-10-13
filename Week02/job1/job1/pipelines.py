@@ -37,3 +37,34 @@ class Job1Pipeline:
             cursor.close()
             connection.close()
         return item
+
+
+class Job1MysqlPipeline:
+
+    # 打开数据库
+    def open_spider(self, spider):
+        self.db_connection = pymysql.connect(host=spider.settings.get("MYSQL_HOST", "127.0.0.1"),
+                                             port=spider.settings.get("MYSQL_PORT", 3306),
+                                             user=spider.settings.get("MYSQL_USER", "root"),
+                                             password=spider.settings.get("MYSQL_PASSWORD", "root@123"),
+                                             database=spider.settings.get("MYSQL_DATABASE", "test-mysql"),
+                                             charset=spider.settings.get("MYSQL_CHARSET", "utf8mb4"))
+        self.db_cursor = self.db_connection.cursor()
+
+    # 关闭数据库
+    def close_spider(self, spider):
+        self.db_cursor.close()
+        self.db_connection.close()
+
+    sql = "insert into movie_maoyan(movie_title,movie_type,movie_time) values (%s,%s,%s)"
+
+    def process_item(self, item, spider):
+        connection = self.db_connection
+        cursor = self.db_cursor
+        try:
+            cursor.execute(self.sql, (item["movie_title"], item["movie_type"], item["movie_time"]))
+            connection.commit()
+        except Exception as e:
+            print(e)
+            connection.rollback()
+        return item

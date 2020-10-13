@@ -11,6 +11,7 @@ from scrapy import signals
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.exceptions import NotConfigured
 from urllib.request import getproxies, proxy_bypass
 
@@ -109,10 +110,14 @@ class Job1DownloaderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
 class Job1DownloaderHttpProxyMiddleware(HttpProxyMiddleware):
-    def __init__(self, auth_encoding='utf-8', http_proxys=None):
+    def __init__(self, auth_encoding='utf-8', http_proxys=None, https_proxys=None):
         self.auth_encoding = auth_encoding
         self.proxies = defaultdict(list)
         for proxy in http_proxys:
+            parse = urlparse(proxy)
+            self.proxies[parse.scheme].append(proxy)
+
+        for proxy in https_proxys:
             parse = urlparse(proxy)
             self.proxies[parse.scheme].append(proxy)
 
@@ -120,11 +125,34 @@ class Job1DownloaderHttpProxyMiddleware(HttpProxyMiddleware):
     def from_crawler(cls, crawler):
         if not crawler.settings.get('HTTP_IP_PROXY'):
             raise NotConfigured
+        if not crawler.settings.get('HTTPS_IP_PROXY'):
+            raise NotConfigured
         http_proxys = crawler.settings.get('HTTP_IP_PROXY')
+        https_proxys = crawler.settings.get('HTTPS_IP_PROXY')
+
         auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
-        return cls(auth_encoding, http_proxys)
+
+        return cls(auth_encoding, http_proxys, https_proxys)
 
     def _set_proxy(self, request, scheme):
         proxy = random.choice(self.proxies[scheme])
         request.meta['proxy'] = proxy
+
+
+class Job1DownloaderUserAgentMiddleware(UserAgentMiddleware):
+    def __init__(self, user_agent='Scrapy'):
+        self.user_agent = user_agent
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        o = cls(crawler.settings['USER_AGENT'])
+        crawler.signals.connect(o.spider_opened, signal=signals.spider_opened)
+        return o
+
+    def spider_opened(self, spider):
+        self.user_agent = getattr(spider, 'user_agent', self.user_agent)
+
+    def process_request(self, request, spider):
+        if self.user_agent:
+            request.headers.setdefault(b'User-Agent', self.user_agent)
 

@@ -18,6 +18,13 @@ HTTP_IP_PROXY = ['http://93.123.23.51:80',
                  'http://111.92.162.4:80',
                  'http://62.201.216.208:80',
                  'http://218.176.242.22:80']
+
+HTTPS_IP_PROXY = ['http://93.123.23.51:80',
+                 'http://218.253.0.153:80',
+                 'http://149.126.86.2:80',
+                 'http://111.92.162.4:80',
+                 'http://62.201.216.208:80',
+                 'http://218.176.242.22:80']
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'job1 (+http://www.yourdomain.com)'
 
@@ -58,6 +65,7 @@ DOWNLOAD_DELAY = 2
 DOWNLOADER_MIDDLEWARES = {
     #'job1.middlewares.Job1DownloaderMiddleware': 543,
     'job1.middlewares.Job1DownloaderHttpProxyMiddleware': 543,
+    #'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
 }
 
 # Enable or disable extensions
@@ -69,7 +77,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'job1.pipelines.Job1Pipeline': 300,
+    'job1.pipelines.Job1Pipeline': None,
+    'job1.pipelines.Job1MysqlPipeline': 300,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -92,3 +102,12 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+#mysql
+MYSQL_HOST = "127.0.0.1"
+MYSQL_PORT = 3306
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "root@123"
+MYSQL_DATABASE = "test-mysql"
+MYSQL_CHARSET = "utf8mb4"
+
+

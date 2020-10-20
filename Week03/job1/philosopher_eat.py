@@ -61,7 +61,7 @@ def begin(philosopher_count, eat_count):
     pool = ThreadPool(max_workers=philosopher_count)
     for _ in range(eat_count):
         for philosopher in philosophers:
-            pool.submit(philosopher.wantsToEat(), philosopher)
+            pool.submit(philosopher.wantsToEat)
     pool.shutdown()
-
-begin(5,3)
+if __name__ == "__main__":
+    begin(5,3)

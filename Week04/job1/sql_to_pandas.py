@@ -39,6 +39,9 @@ print(data.head(10))
 # SELECT id FROM data;
 print(data["id"])
 
+# SELECT COUNT(id) FROM data;
+print(data["id"].count())
+
 # SELECT * FROM data WHERE id<1000 AND age>30;
 print(data[(data["id"] < 1000) & (data["age"] > 30)])
 # 或者map进行筛选
